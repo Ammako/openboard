@@ -1,5 +1,6 @@
 package com.openboard.android.inputmethod.keyboard.clipboard
 
+import android.content.Context
 import android.content.res.Resources
 import android.view.View
 import android.widget.FrameLayout
@@ -8,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.openboard.android.inputmethod.latin.R
 import com.openboard.android.inputmethod.latin.utils.ResourceUtils
 
-class ClipboardLayoutParams(res: Resources) {
+class ClipboardLayoutParams(res: Resources, context: Context) {
 
     private val keyVerticalGap: Int
     private val keyHorizontalGap: Int
@@ -24,7 +25,7 @@ class ClipboardLayoutParams(res: Resources) {
     init {
         val defaultKeyboardHeight = ResourceUtils.getDefaultKeyboardHeight(res)
         val suggestionStripHeight = res.getDimensionPixelSize(R.dimen.config_suggestions_strip_height)
-        val defaultKeyboardWidth = ResourceUtils.getDefaultKeyboardWidth(res)
+        val defaultKeyboardWidth = ResourceUtils.getDefaultKeyboardWidth(res, context)
 
         keyVerticalGap = res.getFraction(R.fraction.config_key_vertical_gap_holo,
                 defaultKeyboardHeight, defaultKeyboardHeight).toInt()

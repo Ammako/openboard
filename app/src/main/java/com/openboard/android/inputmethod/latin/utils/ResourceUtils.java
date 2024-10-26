@@ -16,13 +16,19 @@
 
 package com.openboard.android.inputmethod.latin.utils;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.Insets;
+import android.graphics.Rect;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.WindowInsets;
+import android.view.WindowManager;
+import android.view.WindowMetrics;
 
 import com.openboard.android.inputmethod.annotations.UsedForTesting;
 import com.openboard.android.inputmethod.latin.R;
@@ -182,8 +188,8 @@ public final class ResourceUtils {
         return matchedAll;
     }
 
-    public static int getKeyboardWidth(final Resources res, final SettingsValues settingsValues) {
-        final int defaultKeyboardWidth = getDefaultKeyboardWidth(res);
+    public static int getKeyboardWidth(final Resources res, final Context context, final SettingsValues settingsValues) {
+        final int defaultKeyboardWidth = getDefaultKeyboardWidth(res, context);
         if (settingsValues.mOneHandedModeEnabled) {
             return (int) res.getFraction(R.fraction.config_one_handed_mode_width,
                     defaultKeyboardWidth, defaultKeyboardWidth);
@@ -191,9 +197,22 @@ public final class ResourceUtils {
         return defaultKeyboardWidth;
     }
 
-    public static int getDefaultKeyboardWidth(final Resources res) {
-        final DisplayMetrics dm = res.getDisplayMetrics();
-        return dm.widthPixels;
+    public static int getDefaultKeyboardWidth(final Resources res, final Context context) {
+        if (Build.VERSION.SDK_INT < 35) {
+            final DisplayMetrics dm = res.getDisplayMetrics();
+            return dm.widthPixels;
+        }
+
+        // Since Android 15, insets aren't subtracted from DisplayMetrics.widthPixels, despite
+        // targetSdk remaining set to 31.
+        WindowManager wm = context.getSystemService(WindowManager.class);
+        WindowMetrics windowMetrics = wm.getCurrentWindowMetrics();
+        Rect windowBounds = windowMetrics.getBounds();
+        WindowInsets windowInsets = windowMetrics.getWindowInsets();
+
+        int insetTypes = WindowInsets.Type.systemBars() | WindowInsets.Type.displayCutout();
+        Insets insets = windowInsets.getInsetsIgnoringVisibility(insetTypes);
+        return windowBounds.width() - insets.left - insets.right;
     }
 
     public static int getKeyboardHeight(final Resources res, final SettingsValues settingsValues) {

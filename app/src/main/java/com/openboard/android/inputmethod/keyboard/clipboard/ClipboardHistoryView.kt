@@ -26,7 +26,7 @@ class ClipboardHistoryView @JvmOverloads constructor(
 ) : LinearLayout(context, attrs, defStyle), View.OnTouchListener, View.OnClickListener,
         ClipboardHistoryManager.OnHistoryChangeListener, OnKeyEventListener {
 
-    private val clipboardLayoutParams = ClipboardLayoutParams(context.resources)
+    private val clipboardLayoutParams = ClipboardLayoutParams(context.resources, context)
     private val pinIconId: Int
     private val dividerColor: Int
     private val functionalKeyBackgroundId: Int
@@ -62,7 +62,7 @@ class ClipboardHistoryView @JvmOverloads constructor(
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         val res = context.resources
         // The main keyboard expands to the entire this {@link KeyboardView}.
-        val width = (ResourceUtils.getDefaultKeyboardWidth(res)
+        val width = (ResourceUtils.getDefaultKeyboardWidth(res, context)
                 + paddingLeft + paddingRight)
         val height = (ResourceUtils.getDefaultKeyboardHeight(res)
                 + res.getDimensionPixelSize(R.dimen.config_suggestions_strip_height)
